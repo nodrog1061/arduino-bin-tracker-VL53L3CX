@@ -179,13 +179,15 @@ void loop()
          }
           if(int(no_of_object_found)>=2){
            int unit_test;
+           int data;
            int obj1;
            int obj2;
            int obj3;
            for(j=0;j<no_of_object_found;j++)
             {
+              unit_test = pMultiRangingData->RangeData[j].RangeMilliMeter;
+              
               if (cycle == 0){
-                unit_test = pMultiRangingData->RangeData[j].RangeMilliMeter
                 if (unit_test > distence){
                   unit_test -= distance;
                 }
@@ -202,7 +204,46 @@ void loop()
                   obj3 = unit_test;
                 }
               }
+              if (cycle >= 1){
+                int test_distance = distance / cycle;
+                
+                if (unit_test > distence){
+                  unit_test -= test_distance;
+                }
+                if (unit_test < distence){
+                  unit_test == test_distance - unit_test;
+                }
+                if (j == 1){
+                  obj1 = unit_test;
+                }
+                if (j == 2){
+                  obj2 = unit_test;
+                }
+                if (j == 3){
+                  obj3 = unit_test;
+                }
+              }
             }
+            if (!(obj2==null) && obj3==null){
+              int min_test = min(obj1,obj2);
+              if (min_test == obj1){
+                data = 1
+              }else{
+                data = 2
+              }
+            }
+            if (!(obj2==null) && !(obj3==null)){
+              int min_test = min(obj1,obj2);
+              min_test = min(min_test,obj3);
+              if (min_test == obj1){
+                data = 1
+              }else if (min_test == obj2){
+                data = 2
+              }else{
+                data = 3
+              }
+            }
+            distance += pMultiRangingData->RangeData[data].RangeMilliMeter/10;
           }
       
       if (status==0)
