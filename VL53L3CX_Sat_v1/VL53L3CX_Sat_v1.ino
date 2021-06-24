@@ -169,9 +169,8 @@ void loop()
         cycle = 0;
         distance = 0;
       }
-      //for(j=0;j<no_of_object_found;j++)
-      //{
-        SerialPort.print(int(no_of_object_found));
+
+      SerialPort.print(int(no_of_object_found));
         SerialPort.print("\t");
          if(int(no_of_object_found)=1){
            distance += pMultiRangingData->RangeData[0].RangeMilliMeter/10;
@@ -179,10 +178,32 @@ void loop()
            delay(1);
          }
           if(int(no_of_object_found)>=2){
-            set_col(full);
-            delay(1);
+           int unit_test;
+           int obj1;
+           int obj2;
+           int obj3;
+           for(j=0;j<no_of_object_found;j++)
+            {
+              if (cycle == 0){
+                unit_test = pMultiRangingData->RangeData[j].RangeMilliMeter
+                if (unit_test > distence){
+                  unit_test -= distance;
+                }
+                if (unit_test < distence){
+                  unit_test == distance - unit_test;
+                }
+                if (j == 1){
+                  obj1 = unit_test;
+                }
+                if (j == 2){
+                  obj2 = unit_test;
+                }
+                if (j == 3){
+                  obj3 = unit_test;
+                }
+              }
+            }
           }
-      //}
       
       if (status==0)
       {
