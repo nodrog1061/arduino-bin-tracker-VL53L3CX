@@ -58,6 +58,8 @@
 #include <assert.h>
 #include <stdlib.h>
 
+#include <ArduinoJson.h>
+
 #define DEV_I2C Wire
 #define SerialPort Serial
 
@@ -93,8 +95,8 @@ uint32_t empty = strip.Color(0, 255, 0);
 
 int cycle;
 float distance;
-float upperTol = 240;
-float lowerTol = 75;
+float upperTol = 88;//distence to bottem of bin when full 
+float lowerTol = 5;//distence to bottem of bin when empty 
 
 
 /* Setup ---------------------------------------------------------------------*/
@@ -136,8 +138,9 @@ void loop()
    uint8_t NewDataReady = 0;
    int no_of_object_found = 0, j;
    int status;
-   char report[64];
+   String report;
    int ans;
+   StaticJsonDocument<16> dataOut;
 
    do
    {
@@ -151,19 +154,24 @@ void loop()
    {
       status = sensor_vl53lx_sat.VL53LX_GetMultiRangingData(pMultiRangingData);
       no_of_object_found=pMultiRangingData->NumberOfObjectsFound;
+
+      //make into avrage 
       if (cycle > 4){
         distance /= 4;
-        SerialPort.print(distance);
-        SerialPort.print("\n");
 
         if ((distance > upperTol) || (distance < lowerTol)){
           set_col(outTol);
         }
         if ((distance < upperTol) && (distance > lowerTol)){
           set_col(half);
-          ans = ((distance - upperTol) / (lowerTol - upperTol)) * 10;
-          snprintf(report, sizeof(report), "persent=%d", ans);
-          SerialPort.print(report);
+          
+          ans = ((distance - upperTol) / (lowerTol - upperTol)) * 100;
+          
+          dataOut["percentage"] = ans;
+
+          serializeJson(dataOut, Serial);
+        
+          
         }
 
         cycle = 0;
@@ -171,8 +179,8 @@ void loop()
       }
       //for(j=0;j<no_of_object_found;j++)
       //{
-        SerialPort.print(int(no_of_object_found));
-        SerialPort.print("\t");
+        //SerialPort.print(int(no_of_object_found));
+        //SerialPort.print("\t");
          if(int(no_of_object_found)=1){
            distance += pMultiRangingData->RangeData[0].RangeMilliMeter/10;
            cycle += 1;
