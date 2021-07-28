@@ -88,15 +88,17 @@ Adafruit_DotStar strip(NUMPIXELS, DATAPIN, CLOCKPIN, DOTSTAR_BRG);
 //RGB col define
 uint32_t startup = strip.Color(24, 217, 214);
 uint32_t outTol = strip.Color(255, 0, 0);
+uint32_t twoObj = strip.Color(255, 204, 255);
   
 uint32_t full = strip.Color(255, 196, 0);
 uint32_t half = strip.Color(208, 255, 0);
 uint32_t empty = strip.Color(0, 255, 0);
+uint32_t hold = strip.Color(0, 255, 247);
 
 int cycle;
 float distance;
-float upperTol = 88;//distence to bottem of bin when full 
-float lowerTol = 5;//distence to bottem of bin when empty 
+float upperTol = 88;//distence to bottom of bin when full 
+float lowerTol = 5;//distence to bottom of bin when empty 
 
 
 /* Setup ---------------------------------------------------------------------*/
@@ -163,13 +165,27 @@ void loop()
           set_col(outTol);
         }
         if ((distance < upperTol) && (distance > lowerTol)){
-          set_col(half);
           
           ans = ((distance - upperTol) / (lowerTol - upperTol)) * 100;
+          
+          //set relivent rgb colour
+          if (ans =< 80){
+            set_col(full);
+          } else if (ans =< 20){
+            set_col(half);
+          } else if (ans =< 0){
+            set_col(empty);
+          }
+          
+          //convert to Json and dump to serial can be interprited by python right now
           
           dataOut["percentage"] = ans;
 
           serializeJson(dataOut, Serial);
+          
+          // 5min hold cycle
+          //set_col(hold);
+          //delay(300);
         
           
         }
@@ -187,7 +203,7 @@ void loop()
            delay(1);
          }
           if(int(no_of_object_found)>=2){
-            set_col(full);
+            set_col(twoObj);
             delay(1);
           }
       //}
